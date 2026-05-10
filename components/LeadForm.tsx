@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
 
 type FormValues = {
   fullName: string
@@ -12,6 +12,10 @@ type FormValues = {
 }
 
 type FormErrors = Partial<Record<keyof FormValues, string>>
+
+const ZIP_CODE_REGEX = /^\d{5}$/
+const PHONE_REGEX = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const initialValues: FormValues = {
   fullName: '',
@@ -31,12 +35,12 @@ export default function LeadForm() {
     const nextErrors: FormErrors = {}
 
     if (!values.fullName.trim()) nextErrors.fullName = 'Please enter your full name.'
-    if (!/^\d{5}$/.test(values.zipCode.trim())) nextErrors.zipCode = 'Please enter a valid 5-digit ZIP code.'
+    if (!ZIP_CODE_REGEX.test(values.zipCode.trim())) nextErrors.zipCode = 'Please enter a valid 5-digit ZIP code.'
     if (!values.coverageNeed) nextErrors.coverageNeed = 'Please select your coverage need.'
-    if (!/^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/.test(values.phone.trim())) {
+    if (!PHONE_REGEX.test(values.phone.trim())) {
       nextErrors.phone = 'Please enter a valid phone number.'
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) nextErrors.email = 'Please enter a valid email address.'
+    if (!EMAIL_REGEX.test(values.email.trim())) nextErrors.email = 'Please enter a valid email address.'
     if (!values.consent) nextErrors.consent = 'You must agree before requesting a quote.'
 
     return nextErrors
@@ -55,6 +59,10 @@ export default function LeadForm() {
     setErrors({})
     setIsSubmitted(true)
     setValues(initialValues)
+  }
+
+  const handleZipCodeChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setValues((prev) => ({ ...prev, zipCode: event.target.value.replace(/\D/g, '') }))
   }
 
   return (
@@ -85,7 +93,7 @@ export default function LeadForm() {
               maxLength={5}
               className="w-full rounded-md border border-slate-300 px-3 py-2"
               value={values.zipCode}
-              onChange={(event) => setValues((prev) => ({ ...prev, zipCode: event.target.value.replace(/\D/g, '') }))}
+              onChange={handleZipCodeChange}
             />
             {errors.zipCode && <p className="mt-1 text-sm text-red-600">{errors.zipCode}</p>}
           </div>

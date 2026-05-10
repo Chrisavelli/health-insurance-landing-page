@@ -1,11 +1,15 @@
 import type { Metadata } from 'next'
 import './globals.css'
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://clearquotehealth.com')
+
 export const metadata: Metadata = {
   title: 'ClearQuote Health | Compare Health Insurance Plans',
   description:
     'Compare health insurance plans from trusted carriers in minutes. Find affordable coverage for individuals, families, and self-employed households.',
-  metadataBase: new URL('https://clearquotehealth.com'),
+  metadataBase: new URL(siteUrl),
   openGraph: {
     title: 'Compare Health Insurance Plans in Minutes',
     description:
